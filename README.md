@@ -2,9 +2,11 @@
   <img src="images/projdesk-logo.png" width="170">
 </p>
 
-# 🚀 ProjDesk
+<h1 align="center">ProjDesk</h1>
 
-> **Less friction. More code.**
+<p align="center">
+  Less friction. More code.
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-WSL-blue">
