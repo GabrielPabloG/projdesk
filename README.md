@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="assets/logo.png" width="170">
+  <img src="images/projdesk-logo.png" width="170">
 </p>
 
 # 🚀 ProjDesk
 
 > **Less friction. More code.**
->
-> <p align="center">
+
+<p align="center">
   <img src="https://img.shields.io/badge/platform-WSL-blue">
   <img src="https://img.shields.io/badge/license-MIT-green">
   <img src="https://img.shields.io/badge/bash-5+-orange">
