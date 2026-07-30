@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="images/projdesk-logo.png">
+  <img src="images/projdesk-logo.png" width="375">
 </p>
 
 <h1 align="center">ProjDesk</h1>
 
-<p align="center">
+<p align="center" style="display: none;">
   Less friction. More code.
 </p>
 
