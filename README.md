@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/projdesk-logo.png" width="170">
+  <img src="images/projdesk-logo.png">
 </p>
 
 <h1 align="center">ProjDesk</h1>
