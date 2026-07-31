@@ -1,5 +1,6 @@
 # Configurações locais e Variáveis de Ambiente
 config.sh
+.ai-jail
 .env
 .env.*
 !.env.example
