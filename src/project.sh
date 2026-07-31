@@ -27,6 +27,9 @@ open_project() {
 
     if has_docker_compose; then
         start_docker
+        if [ "$AUTO_START_CONTAINERS" = true ]; then
+            compose_up
+        fi
     fi
 
     if [ "$AUTO_OPEN_CODE" = true ]; then

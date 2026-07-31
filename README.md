@@ -4,8 +4,8 @@
 
 <h1 align="center">ProjDesk</h1>
 
-<p align="center" style="display: none;">
-  Less friction. More code.
+<p align="center">
+  <i>Less friction. More code.</i>
 </p>
 
 <p align="center">
@@ -14,235 +14,214 @@
   <img src="https://img.shields.io/badge/bash-5+-orange">
 </p>
 
-ProjDesk is an intelligent workspace manager for WSL that removes the small interruptions between you and your code.
-
-Every development session starts the same way:
-
-* Open the terminal.
-* Navigate to the project.
-* Open the IDE.
-* Start Docker.
-* Remember which IDE this project uses.
-* Remember the Docker command.
-* Finally... start coding.
-
-Those aren't difficult tasks.
-
-They're just repetitive.
-
-ProjDesk was built to eliminate that friction.
-
-Instead of:
-
-```bash
-cd ~/projects/my-project
-code .
-docker compose up -d
-```
-
-you simply type:
+ProjDesk is an intelligent workspace manager for WSL. It turns the repetitive startup ritual of every development session into a single command:
 
 ```bash
 pd my-project
 ```
 
-and start building.
-
----
-
-# ✨ Features
-
-* 📂 Automatically create projects
-* 📁 Jump into any workspace
-* 💻 Open Visual Studio Code automatically
-* 🤖 Detect Android projects and launch Android Studio
-* 🐳 Start Docker Desktop only when needed
-* 🚀 Docker Compose integration
-* 🔨 One-command container rebuilds
-* 📜 Container logs
-* 🛑 Stop containers
-* ⚡ Bash autocomplete
-* 🧩 Modular architecture
-
----
-
-# Philosophy
-
-ProjDesk is built around one simple belief:
-
-> **The fewer commands you have to remember, the faster you can create.**
-
-Modern development isn't difficult because of programming.
-
-It's difficult because of context switching.
-
-Open this.
-
-Launch that.
-
-Navigate here.
-
-Run this command.
-
-Oops...
-
-Wrong directory.
-
-Forgot Docker.
-
-Wrong IDE.
-
-None of these tasks create value.
-
-They simply delay the moment you begin writing code.
-
-ProjDesk exists to remove those tiny interruptions from your daily workflow.
-
-The goal isn't automation for the sake of automation.
-
-The goal is to reduce cognitive load.
-
-Instead of remembering *how* to start working, you simply start working.
-
----
-
-# One Command
-
-Backend project?
+Instead of manually navigating to a project, opening the right IDE, and remembering whether Docker needs to run, ProjDesk detects what the project needs and gets out of your way.
 
 ```bash
-pd backend-api
+# Instead of this:
+cd ~/projects/my-project
+code .
+docker compose up -d
+
+# Just this:
+pd my-project
 ```
 
-Android project?
+## Table of Contents
 
-```bash
-pd fit-tracker
+- [Features](#features)
+- [Command Reference](#command-reference)
+- [How It Works](#how-it-works)
+- [Design Principles](#design-principles)
+- [Architecture](#architecture)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Roadmap](#roadmap)
+- [License](#license)
+
+## Features
+
+**Workspace management**
+- Create projects automatically — `pd name` creates the folder if it doesn't exist
+- Jump into any workspace from anywhere
+- List all projects in your workspace
+
+**Smart IDE integration**
+- Opens Visual Studio Code by default
+- Detects Android (Gradle) and Flutter projects and opens Android Studio automatically
+- Force Android Studio with the `a` flag: `pd a fit-tracker`
+
+**Docker lifecycle**
+- Starts Docker Desktop automatically when a project needs it
+- Detects Docker Compose projects (`docker-compose.yml`, `compose.yml`, …)
+- Start, rebuild, stop, and tail logs in one command
+- Honors `docker-compose.dev.yml` overrides when present
+
+**Developer experience**
+- Bash autocomplete for project names
+- Modular, lightweight shell-only codebase (no dependencies)
+- No prompts when the answer can be detected
+
+## Command Reference
+
+Commands follow a progressive refinement structure: **Noun → Verb → Modifier**. Each argument narrows intent. Commands that reward learning have documented single-letter aliases.
+
+### Workspace Commands
+
+| Command | Alias | Description |
+| --- | --- | --- |
+| `pd <project>` | | Open or create a project in VS Code |
+| `pd a <project>` | `pd -a` | Open or create an Android project in Android Studio |
+| `pd list` | `pd ls` | List all projects in the workspace |
+
+### Environment Commands
+
+| Command | Alias | Description |
+| --- | --- | --- |
+| `pd up` | | Start Docker Desktop and bring up Compose services |
+| `pd rebuild` | | Rebuild and restart Compose services |
+| `pd down` | | Stop Compose services |
+| `pd logs` | | Tail Compose service logs |
+
+## How It Works
+
+### The Semantic Command Tree
+
+ProjDesk is not a flat list of scripts. It is a **semantic command tree** built on progressive refinement:
+
+```
+Noun → Verb → Modifier
 ```
 
-Need to create a new Android project?
+- `pd` — the workspace (noun, implicit)
+- `pd up` — refine to an action (verb): start the environment
+- `pd a my-project` — refine further (modifier): Android project, specifically
 
-```bash
-pd a fit-tracker
+The tool adapts to your intent. You never tell it *how* to open a project; you tell it *which* project, and ProjDesk figures out the rest.
+
+### Alias as a Reward
+
+Full words are for discovery. Aliases are for speed. Every documented command ships with a shorthand so that experienced users can move faster:
+
+```
+pd list        →  pd ls
 ```
 
-Docker containers?
+Learning the tool pays off in fewer keystrokes, not fewer features.
 
-```bash
-pd up
+## Design Principles
+
+- **No prompts when it can be automated.** If ProjDesk can detect a project type, it opens the right IDE instead of asking.
+- **Silent success, loud failure.** When `pd up` works, it starts the containers and gets out of the way. When it fails, the message is clear and actionable.
+- **Graceful degradation.** If an automation can't run (e.g., Docker isn't available), ProjDesk says so in human terms and suggests the next step.
+- **The project decides, not you.** Detection replaces decision-making. Docker Compose projects start Docker; Android projects open Android Studio.
+
+## Architecture
+
+ProjDesk is strictly modular. Every file in `src/` has one job and stays small:
+
+| Module | Responsibility |
+| --- | --- |
+| `init.sh` | Entry point. Registers the `pd` function and loads all modules |
+| `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_EXE`, `AUTO_OPEN_CODE`) |
+| `project.sh` | Router and workspace manipulator — parses the semantic tree and dispatches commands |
+| `detect.sh` | Sensory layer — inspects the filesystem for Docker Compose and mobile projects |
+| `docker.sh` | Docker lifecycle — Desktop auto-start, up, rebuild, down, logs |
+| `completion.sh` | Bash autocomplete for project names |
+
+```
+src/
+├── init.sh          # entry point: registers pd() and sources modules
+├── config.sh        # user configuration
+├── detect.sh        # project detection (compose, gradle, flutter)
+├── docker.sh        # docker desktop + compose lifecycle
+├── project.sh       # command router + workspace actions
+└── completion.sh    # bash completion
 ```
 
-Need to rebuild?
+## Requirements
 
-```bash
-pd rebuild
-```
+- **WSL** (Docker Desktop integration assumes WSL with Windows interop via `powershell.exe`)
+- **Bash 5+**
+- **VS Code** with the `code` CLI available in `PATH`
+- **Android Studio** at `~/android-studio/bin/studio.sh` (for Android/Flutter projects)
+- **Docker Desktop** at the default Windows path (configurable)
 
-Done for today?
+## Installation
 
-```bash
-pd down
-```
-
-One command.
-
-One workspace.
-
-One consistent workflow.
-
----
-
-# Smart Workspace Detection
-
-ProjDesk understands your workspace.
-
-It automatically detects:
-
-* Docker Compose projects
-* Android (Gradle) projects
-* Existing workspaces
-* New workspaces
-
-Instead of asking:
-
-> "Which IDE should I open?"
-
-ProjDesk asks:
-
-> "What does this project need?"
-
-The project decides.
-
-Not you.
-
----
-
-# Installation
-
-Clone the repository:
+### Using the installer
 
 ```bash
 git clone <repository-url> ~/.config/projdesk
+~/.config/projdesk/install.sh
 ```
 
-Load ProjDesk from your shell:
-
-```bash
-source ~/.config/projdesk/init.sh
-```
-
-Reload Bash:
+The installer adds the `source` line to your `~/.bashrc` automatically. Restart your terminal or reload your shell:
 
 ```bash
 source ~/.bashrc
 ```
 
-You're ready.
+### Manual setup
 
----
+```bash
+git clone <repository-url> ~/.config/projdesk
+```
 
-# Roadmap
+Add this line to your `~/.bashrc`:
 
-* [x] Workspace navigation
-* [x] Automatic project creation
-* [x] VS Code integration
-* [x] Android Studio integration
-* [x] Android project detection
-* [x] Docker Desktop integration
-* [x] Docker Compose integration
-* [x] Bash autocomplete
+```bash
+source ~/.config/projdesk/src/init.sh
+```
+
+Then reload:
+
+```bash
+source ~/.bashrc
+```
+
+## Configuration
+
+Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust to taste:
+
+| Variable | Default | Description |
+| --- | --- | --- |
+| `PROJECTS_DIR` | `$HOME/projects` | Base directory for all projects |
+| `DOCKER_EXE` | `C:\Program Files\Docker\Docker\Docker Desktop.exe` | Path to the Docker Desktop executable |
+| `AUTO_OPEN_CODE` | `true` | Open the IDE automatically when entering a project |
+| `AUTO_START_CONTAINERS` | `false` | Bring up Compose services automatically when opening a project |
+
+## Roadmap
+
+### Implemented
+
+- [x] Workspace navigation and automatic project creation
+- [x] VS Code integration
+- [x] Android Studio integration with Android/Flutter detection
+- [x] Docker Desktop auto-start
+- [x] Docker Compose lifecycle (up, rebuild, down, logs)
+- [x] Bash autocomplete
+- [x] Modular `src/` architecture
 
 ### Coming next
 
-* [ ] Automatic language detection
-* [ ] IntelliJ IDEA support
-* [ ] PyCharm support
-* [ ] WebStorm support
-* [ ] Rider support
-* [ ] Project templates
-* [ ] Git repository initialization
-* [ ] Plugin system
-* [ ] `pd doctor`
-* [ ] Interactive mode
-* [ ] Workspace profiles
+- [ ] `pd recent` — jump back into recently used projects
+- [ ] `pd doctor` — diagnostics and auto-fix for dependencies
+- [ ] `pd help` — command map mirroring the semantic tree
+- [ ] Automatic language detection
+- [ ] IntelliJ IDEA, PyCharm, WebStorm, and Rider support
+- [ ] Project templates
+- [ ] Git repository initialization
+- [ ] Plugin system
+- [ ] Interactive mode
+- [ ] Workspace profiles
 
----
+## License
 
-# Why "ProjDesk"?
-
-A developer's desk should feel organized.
-
-You shouldn't have to remember where your projects live, which IDE they use, or whether Docker needs to be running.
-
-ProjDesk becomes your development desk.
-
-Everything you need.
-
-One command away.
-
----
-
-# License
-
-MIT
-
+[MIT](LICENSE) © Gabriel Pablo Garcia
