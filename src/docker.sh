@@ -2,9 +2,17 @@
 
 docker_running() {
 
-    powershell.exe -NoProfile \
-        -Command "Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue" \
-        | grep -q "Docker Desktop"
+    if [ "$DOCKER_MODE" = "wsl" ]; then
+
+        docker info >/dev/null 2>&1
+
+    else
+
+        powershell.exe -NoProfile \
+            -Command "Get-Process 'Docker Desktop' -ErrorAction SilentlyContinue" \
+            | grep -q "Docker Desktop"
+
+    fi
 
 }
 
@@ -21,10 +29,20 @@ start_docker() {
         return
     fi
 
-    echo "🐳 Iniciando Docker Desktop..."
+    if [ "$DOCKER_MODE" = "wsl" ]; then
 
-    powershell.exe -NoProfile \
-        -Command "& '$DOCKER_EXE'"
+        echo "🐳 Iniciando Docker (WSL)..."
+
+        sudo service docker start
+
+    else
+
+        echo "🐳 Iniciando Docker Desktop..."
+
+        powershell.exe -NoProfile \
+            -Command "& '$DOCKER_EXE'"
+
+    fi
 
     echo "⌛ Aguardando Docker..."
 
