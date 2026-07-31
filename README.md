@@ -66,7 +66,7 @@ projdesk r ls
 - Force Android Studio with the `a` flag: `pd a fit-tracker`
 
 **Docker lifecycle**
-- Starts Docker Desktop automatically when a project needs it
+- Starts Docker automatically when a project needs it (Docker Engine in WSL or Docker Desktop)
 - Detects Docker Compose projects (`docker-compose.yml`, `compose.yml`, …)
 - Start, rebuild, stop, and tail logs in one command
 - Honors `docker-compose.dev.yml` overrides when present
@@ -94,7 +94,7 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 
 | Command | Alias | Description |
 | --- | --- | --- |
-| `pd up` | | Start Docker Desktop and bring up Compose services |
+| `pd up` | | Start Docker and bring up Compose services |
 | `pd rebuild` | | Rebuild and restart Compose services |
 | `pd down` | | Stop Compose services |
 | `pd logs` | | Tail Compose service logs |
@@ -139,10 +139,10 @@ ProjDesk is strictly modular. Every file in `src/` has one job and stays small:
 | Module | Responsibility |
 | --- | --- |
 | `init.sh` | Entry point. Registers the `pd` function and loads all modules |
-| `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_EXE`, `AUTO_OPEN_CODE`) |
+| `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_MODE`, `DOCKER_EXE`, `AUTO_OPEN_CODE`) |
 | `project.sh` | Router and workspace manipulator — parses the semantic tree and dispatches commands |
 | `detect.sh` | Sensory layer — inspects the filesystem for Docker Compose and mobile projects |
-| `docker.sh` | Docker lifecycle — Desktop auto-start, up, rebuild, down, logs |
+| `docker.sh` | Docker lifecycle — backend-aware auto-start (WSL engine or Desktop), up, rebuild, down, logs |
 | `completion.sh` | Bash autocomplete for project names |
 
 ```
@@ -150,18 +150,18 @@ src/
 ├── init.sh          # entry point: registers pd() and sources modules
 ├── config.sh        # user configuration
 ├── detect.sh        # project detection (compose, gradle, flutter)
-├── docker.sh        # docker desktop + compose lifecycle
+├── docker.sh        # docker engine (wsl/desktop) + compose lifecycle
 ├── project.sh       # command router + workspace actions
 └── completion.sh    # bash completion
 ```
 
 ## Requirements
 
-- **WSL** (Docker Desktop integration assumes WSL with Windows interop via `powershell.exe`)
+- **WSL** (the `desktop` backend uses Windows interop via `powershell.exe`)
 - **Bash 5+**
 - **VS Code** with the `code` CLI available in `PATH`
 - **Android Studio** at `~/android-studio/bin/studio.sh` (for Android/Flutter projects)
-- **Docker Desktop** at the default Windows path (configurable)
+- **Docker** — Docker Engine installed natively in WSL (`DOCKER_MODE=wsl`) or Docker Desktop on Windows (`DOCKER_MODE=desktop`)
 
 ## Installation
 
@@ -203,7 +203,8 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 | Variable | Default | Description |
 | --- | --- | --- |
 | `PROJECTS_DIR` | `$HOME/projects` | Base directory for all projects |
-| `DOCKER_EXE` | `C:\Program Files\Docker\Docker\Docker Desktop.exe` | Path to the Docker Desktop executable |
+| `DOCKER_EXE` | `C:\Program Files\Docker\Docker\Docker Desktop.exe` | Path to the Docker Desktop executable (`desktop` mode) |
+| `DOCKER_MODE` | `desktop` | `wsl` = native Docker Engine in WSL · `desktop` = Docker Desktop on Windows |
 | `AUTO_OPEN_CODE` | `true` | Open the IDE automatically when entering a project |
 | `AUTO_START_CONTAINERS` | `false` | Bring up Compose services automatically when opening a project |
 | `RECENT_FILE` | `$HOME/.config/projdesk/recent` | History file for recently used projects |
@@ -215,7 +216,7 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 - [x] Workspace navigation and automatic project creation
 - [x] VS Code integration
 - [x] Android Studio integration with Android/Flutter detection
-- [x] Docker Desktop auto-start
+- [x] Docker auto-start (WSL engine or Docker Desktop)
 - [x] Docker Compose lifecycle (up, rebuild, down, logs)
 - [x] Bash autocomplete for projects and commands
 - [x] Recent projects history (`pd recent` / `pd r`)
