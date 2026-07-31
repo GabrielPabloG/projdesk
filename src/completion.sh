@@ -1,27 +1,46 @@
 #!/usr/bin/env bash
 
+_pd_commands() {
+    echo "a down list logs ls r recent rebuild up"
+}
+
 _pd_completion() {
 
-    local current
+    local current prev
 
     current="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     COMPREPLY=()
 
-    local projects=()
+    if [ "$COMP_CWORD" -eq 1 ]; then
 
-    for dir in "$PROJECTS_DIR"/*; do
+        local words
+        words="$(_pd_commands)"
 
-        [[ -d "$dir" ]] || continue
+        for dir in "$PROJECTS_DIR"/*; do
 
-        projects+=("$(basename "$dir")")
+            [[ -d "$dir" ]] || continue
 
-    done
+            words+=" $(basename "$dir")"
 
-    COMPREPLY=(
-        $(compgen -W "${projects[*]}" -- "$current")
-    )
+        done
+
+        COMPREPLY=(
+            $(compgen -W "$words" -- "$current")
+        )
+
+        return
+    fi
+
+    case "$prev" in
+        recent|r)
+            COMPREPLY=(
+                $(compgen -W "list ls" -- "$current")
+            )
+            ;;
+    esac
 
 }
 
-complete -F _pd_completion pd
+complete -F _pd_completion pd projdesk

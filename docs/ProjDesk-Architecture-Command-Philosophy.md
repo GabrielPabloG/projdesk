@@ -56,6 +56,8 @@ detect.sh: The sensory organ. It inspects files (build.gradle, docker-compose.ym
 
 project.sh: The manipulator. It handles directory creation, navigation, and opening IDEs.
 
+recent.sh: The memory. It tracks which projects were opened and powers the most-recently-used commands.
+
 4. Design Guidelines for New Features
 
 When contributing or adding new commands to ProjDesk, you must adhere to these rules:
@@ -67,6 +69,8 @@ Graceful Degradation: If an automation fails (e.g., Docker isn't installed), cat
 Silent Success, Loud Failure: When pd up works, it shouldn't print a massive wall of text. It should start the containers and get out of the way. When it fails, it should be loud and clear.
 
 Always Provide an Alias: Every new command (plugin, template, update) must come with a documented 1 or 2 letter alias.
+
+Discovery via Autocomplete: Every command must be reachable through tab completion. The autocomplete bridges the two halves of the learning curve: full words for discovery, aliases for speed. A user typing pd rec<TAB> should be offered recent without reading the docs. If a command cannot be completed, it cannot be discovered.
 
 5. The Command Map (Help Output)
 

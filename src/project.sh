@@ -25,6 +25,8 @@ open_project() {
     mkdir -p "$PROJECTS_DIR/$PROJECT"
     cd "$PROJECTS_DIR/$PROJECT" || return 1
 
+    recent_add "$PROJECT"
+
     if has_docker_compose; then
         start_docker
         if [ "$AUTO_START_CONTAINERS" = true ]; then
@@ -64,8 +66,12 @@ main() {
         logs)
             compose_logs
             ;;
-        list|ls) 
+        list|ls)
             list_projects
+            ;;
+        recent|r)
+            shift
+            recent "$@"
             ;;
         *)
             open_project "$1" "$FORCE_ANDROID"

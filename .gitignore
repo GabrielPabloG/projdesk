@@ -5,6 +5,9 @@ config.sh
 .env.*
 !.env.example
 
+# Histórico de projetos recentes
+recent
+
 # Logs do sistema
 *.log
 

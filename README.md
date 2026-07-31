@@ -32,6 +32,13 @@ docker compose up -d
 pd my-project
 ```
 
+`pd` is the short alias — `projdesk` works everywhere too:
+
+```bash
+projdesk my-project
+projdesk r ls
+```
+
 ## Table of Contents
 
 - [Features](#features)
@@ -51,6 +58,7 @@ pd my-project
 - Create projects automatically — `pd name` creates the folder if it doesn't exist
 - Jump into any workspace from anywhere
 - List all projects in your workspace
+- Jump back into recently used projects — `pd recent` (alias: `pd r`)
 
 **Smart IDE integration**
 - Opens Visual Studio Code by default
@@ -64,7 +72,7 @@ pd my-project
 - Honors `docker-compose.dev.yml` overrides when present
 
 **Developer experience**
-- Bash autocomplete for project names
+- Bash autocomplete for project names and commands
 - Modular, lightweight shell-only codebase (no dependencies)
 - No prompts when the answer can be detected
 
@@ -79,6 +87,8 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | `pd <project>` | | Open or create a project in VS Code |
 | `pd a <project>` | `pd -a` | Open or create an Android project in Android Studio |
 | `pd list` | `pd ls` | List all projects in the workspace |
+| `pd recent` | `pd r` | Open the most recently used project |
+| `pd recent list` | `pd r ls` | List the last 10 used projects |
 
 ### Environment Commands
 
@@ -196,6 +206,7 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 | `DOCKER_EXE` | `C:\Program Files\Docker\Docker\Docker Desktop.exe` | Path to the Docker Desktop executable |
 | `AUTO_OPEN_CODE` | `true` | Open the IDE automatically when entering a project |
 | `AUTO_START_CONTAINERS` | `false` | Bring up Compose services automatically when opening a project |
+| `RECENT_FILE` | `$HOME/.config/projdesk/recent` | History file for recently used projects |
 
 ## Roadmap
 
@@ -206,12 +217,12 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 - [x] Android Studio integration with Android/Flutter detection
 - [x] Docker Desktop auto-start
 - [x] Docker Compose lifecycle (up, rebuild, down, logs)
-- [x] Bash autocomplete
+- [x] Bash autocomplete for projects and commands
+- [x] Recent projects history (`pd recent` / `pd r`)
 - [x] Modular `src/` architecture
 
 ### Coming next
 
-- [ ] `pd recent` — jump back into recently used projects
 - [ ] `pd doctor` — diagnostics and auto-fix for dependencies
 - [ ] `pd help` — command map mirroring the semantic tree
 - [ ] Automatic language detection

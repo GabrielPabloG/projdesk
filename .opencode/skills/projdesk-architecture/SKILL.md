@@ -16,6 +16,7 @@ metadata:
 - Guarantee that the `main()` router in `project.sh` correctly processes semantic arguments, maintaining a clear semantic tree.
 - Maintain the strict separation of concerns, separating logic controllers from display views (like `help.sh`).
 - Keep the CLI fast, lightweight, and focused on reducing developer friction.
+- After finishing code changes, remind the user to reload the shell (`source ~/.bashrc` or `source ~/.config/projdesk/src/init.sh`). The `pd()` function lives in shell memory, so a stale shell silently runs the old router — e.g. `pd recent` falls through to `open_project` and creates a project literally named "recent".
 
 ## When to use me
 
