@@ -208,6 +208,7 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 | `DOCKER_MODE` | `desktop` | `wsl` = native Docker Engine in WSL · `desktop` = Docker Desktop on Windows |
 | `AUTO_OPEN_CODE` | `true` | Open the IDE automatically when entering a project |
 | `AUTO_START_CONTAINERS` | `false` | Bring up Compose services automatically when opening a project |
+| `PD_LANG` | (from `$LANG`) | `pt_BR` = Portuguese · `en` = English · `es` = Spanish. Falls back to system locale, then `en`. |
 | `RECENT_FILE` | `$HOME/.config/projdesk/recent` | History file for recently used projects |
 
 ## Testing

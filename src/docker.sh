@@ -31,26 +31,26 @@ start_docker() {
 
     if [ "$DOCKER_MODE" = "wsl" ]; then
 
-        echo "🐳 Iniciando Docker (WSL)..."
+        t docker_starting_wsl
 
         sudo service docker start
 
     else
 
-        echo "🐳 Iniciando Docker Desktop..."
+        t docker_starting_desktop
 
         powershell.exe -NoProfile \
             -Command "& '$DOCKER_EXE'"
 
     fi
 
-    echo "⌛ Aguardando Docker..."
+    t docker_waiting
 
     until docker info >/dev/null 2>&1; do
         sleep 2
     done
 
-    echo "✅ Docker pronto"
+    t docker_ready
 }
 
 compose_command() {
@@ -72,7 +72,7 @@ compose_command() {
 compose_up() {
 
     if ! has_docker_compose; then
-        echo "❌ docker-compose.yml não encontrado."
+        t compose_not_found
         return 1
     fi
 
@@ -84,7 +84,7 @@ compose_up() {
 compose_build() {
 
     if ! has_docker_compose; then
-        echo "❌ docker-compose.yml não encontrado."
+        t compose_not_found
         return 1
     fi
 
@@ -96,7 +96,7 @@ compose_build() {
 compose_down() {
 
     if ! has_docker_compose; then
-        echo "❌ docker-compose.yml não encontrado."
+        t compose_not_found
         return 1
     fi
 
@@ -106,7 +106,7 @@ compose_down() {
 compose_logs() {
 
     if ! has_docker_compose; then
-        echo "❌ docker-compose.yml não encontrado."
+        t compose_not_found
         return 1
     fi
 

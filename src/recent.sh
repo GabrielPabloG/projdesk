@@ -37,11 +37,11 @@ recent_list() {
     FILE="$(recent_file)"
 
     if [ ! -s "$FILE" ]; then
-        echo "🕐 Nenhum projeto recente ainda."
+        t recent_empty
         return 1
     fi
 
-    echo "🕐 Projetos recentes:"
+    t recent_title
     head -n 10 "$FILE" | nl -w 2 -s '. '
 }
 
@@ -53,7 +53,7 @@ recent_open() {
     LATEST="$(head -n 1 "$FILE" 2>/dev/null)"
 
     if [ -z "$LATEST" ]; then
-        echo "🕐 Nenhum projeto recente ainda. Abra um com: pd <projeto>"
+        t recent_empty_open
         return 1
     fi
 

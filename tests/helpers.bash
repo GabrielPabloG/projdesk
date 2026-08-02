@@ -4,6 +4,9 @@ TEST_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC2034
 SRC="$TEST_ROOT/../src"
 
+# shellcheck source=../src/strings.sh
+source "$SRC/strings.sh"
+
 export PROJECTS_DIR
 export RECENT_FILE
 export DOCKER_MODE=wsl
@@ -13,6 +16,7 @@ export AUTO_START_CONTAINERS=false
 export MOCK_LOG="$BATS_TEST_TMPDIR/mock.log"
 
 setup() {
+    export PD_LANG=pt_BR
     PROJECTS_DIR="$BATS_TEST_TMPDIR/projects"
     RECENT_FILE="$BATS_TEST_TMPDIR/recent"
     : > "$MOCK_LOG"

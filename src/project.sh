@@ -2,19 +2,17 @@
 
 # Nova função para listar os projetos
 list_projects() {
-    # Verifica se a pasta base de projetos existe
     if [ ! -d "$PROJECTS_DIR" ]; then
-        echo "❌ Diretório de projetos não encontrado: $PROJECTS_DIR"
+        t projects_dir_not_found "$PROJECTS_DIR"
         return 1
     fi
 
-    echo "📂 Seus projetos:"
-    # Lista apenas os nomes das pastas dentro do diretório, em ordem alfabética
+    t projects_title
     ls -1 "$PROJECTS_DIR"
 }
 
 open_android_studio() {
-    echo "📱 Abrindo Android Studio..."
+    t android_opening
     ~/android-studio/bin/studio.sh &
 }
 
@@ -22,7 +20,7 @@ open_project() {
     local PROJECT="$1"
 
     if [ -z "$PROJECT" ]; then
-        echo "Uso: pd <projeto>"
+        t usage_open
         return 1
     fi
 
@@ -40,10 +38,10 @@ open_project() {
 
     if [ "$AUTO_OPEN_CODE" = true ]; then
         if is_mobile_project; then
-            echo "📱 Projeto Mobile detectado! Abrindo no Android Studio..."
+            t mobile_detected
             ~/android-studio/bin/studio.sh . &
         else
-            echo "💻 Abrindo no VS Code..."
+            t vscode_opening
             code .
         fi
     fi

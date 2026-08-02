@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
-echo "🚀 Instalando o ProjDesk..."
+# shellcheck source=src/strings.sh
+source "$HOME/.config/projdesk/src/strings.sh"
+
+t install_title
 
 INIT_SCRIPT="$HOME/.config/projdesk/src/init.sh"
 
-# Verifica se já existe no bashrc para não duplicar
 if ! grep -q "projdesk/src/init.sh" "$HOME/.bashrc"; then
     {
         echo ""
-        echo "# Inicializa o ProjDesk"
+        t install_comment
         echo "source $INIT_SCRIPT"
     } >> "$HOME/.bashrc"
-    echo "✅ ProjDesk adicionado ao seu ~/.bashrc!"
+    t install_added
 else
-    echo "⚠️ ProjDesk já está configurado no seu ~/.bashrc."
+    t install_already
 fi
 
-echo "🎉 Instalação concluída! Reinicie o terminal ou rode: source ~/.bashrc"
+t install_done

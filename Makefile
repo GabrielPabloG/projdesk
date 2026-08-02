@@ -1,7 +1,7 @@
 .PHONY: lint test install-hook
 
 lint:
-	shellcheck --source-path=SCRIPTDIR install.sh src/*.sh tests/run.sh tests/helpers.bash
+	shellcheck --source-path=SCRIPTDIR install.sh src/*.sh src/lang/*.sh tests/run.sh tests/helpers.bash
 
 test:
 	bash tests/run.sh
