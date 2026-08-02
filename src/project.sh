@@ -13,12 +13,16 @@ list_projects() {
     ls -1 "$PROJECTS_DIR"
 }
 
+open_android_studio() {
+    echo "📱 Abrindo Android Studio..."
+    ~/android-studio/bin/studio.sh &
+}
+
 open_project() {
     local PROJECT="$1"
-    local FORCE_ANDROID="$2" 
 
     if [ -z "$PROJECT" ]; then
-        echo "Uso: pd [a] <projeto>"
+        echo "Uso: pd <projeto>"
         return 1
     fi
 
@@ -35,7 +39,7 @@ open_project() {
     fi
 
     if [ "$AUTO_OPEN_CODE" = true ]; then
-        if [ "$FORCE_ANDROID" = true ] || is_mobile_project; then
+        if is_mobile_project; then
             echo "📱 Projeto Mobile detectado! Abrindo no Android Studio..."
             ~/android-studio/bin/studio.sh . &
         else
@@ -46,14 +50,10 @@ open_project() {
 }
 
 main() {
-    local FORCE_ANDROID=false
-
-    if [[ "$1" == "a" || "$1" == "-a" || "$1" == "--android" ]]; then
-        FORCE_ANDROID=true
-        shift 
-    fi
-
     case "$1" in
+        a|-a|--android)
+            open_android_studio
+            ;;
         up)
             compose_up
             ;;
@@ -74,7 +74,7 @@ main() {
             recent "$@"
             ;;
         *)
-            open_project "$1" "$FORCE_ANDROID"
+            open_project "$1"
             ;;
     esac
 }

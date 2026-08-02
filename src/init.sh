@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# shellcheck source=config.sh
+# shellcheck source=detect.sh
+# shellcheck source=docker.sh
+# shellcheck source=recent.sh
+# shellcheck source=project.sh
+# shellcheck source=completion.sh
 PROJDESK_SRC="$HOME/.config/projdesk/src"
 
 source "$PROJDESK_SRC/config.sh"

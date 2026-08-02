@@ -12,6 +12,7 @@
   <img src="https://img.shields.io/badge/platform-WSL-blue">
   <img src="https://img.shields.io/badge/license-MIT-green">
   <img src="https://img.shields.io/badge/bash-5+-orange">
+  <img src="https://github.com/GabrielPabloG/projdesk/actions/workflows/test.yml/badge.svg">
 </p>
 
 ProjDesk is an intelligent workspace manager for WSL. It turns the repetitive startup ritual of every development session into a single command:
@@ -63,7 +64,7 @@ projdesk r ls
 **Smart IDE integration**
 - Opens Visual Studio Code by default
 - Detects Android (Gradle) and Flutter projects and opens Android Studio automatically
-- Force Android Studio with the `a` flag: `pd a fit-tracker`
+- Launch Android Studio's New Project wizard with `pd a`
 
 **Docker lifecycle**
 - Starts Docker automatically when a project needs it (Docker Engine in WSL or Docker Desktop)
@@ -85,7 +86,7 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | Command | Alias | Description |
 | --- | --- | --- |
 | `pd <project>` | | Open or create a project in VS Code |
-| `pd a <project>` | `pd -a` | Open or create an Android project in Android Studio |
+| `pd a` | `pd -a` | Open Android Studio's New Project wizard |
 | `pd list` | `pd ls` | List all projects in the workspace |
 | `pd recent` | `pd r` | Open the most recently used project |
 | `pd recent list` | `pd r ls` | List the last 10 used projects |
@@ -111,7 +112,7 @@ Noun → Verb → Modifier
 
 - `pd` — the workspace (noun, implicit)
 - `pd up` — refine to an action (verb): start the environment
-- `pd a my-project` — refine further (modifier): Android project, specifically
+- `pd a` — refine further (modifier): Android, specifically — opens Android Studio's New Project wizard
 
 The tool adapts to your intent. You never tell it *how* to open a project; you tell it *which* project, and ProjDesk figures out the rest.
 
@@ -209,6 +210,16 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 | `AUTO_START_CONTAINERS` | `false` | Bring up Compose services automatically when opening a project |
 | `RECENT_FILE` | `$HOME/.config/projdesk/recent` | History file for recently used projects |
 
+## Testing
+
+| Command | What it does |
+| --- | --- |
+| `make lint` | Static analysis with [ShellCheck](https://www.shellcheck.net) |
+| `make test` | Run test suite with [BATS](https://github.com/bats-core/bats-core) |
+| `make install-hook` | Install a `pre-push` hook that runs lint + tests before every push |
+
+Tests run in isolated temporary directories — no real Docker, no system `.bashrc`, no Android Studio.
+
 ## Roadmap
 
 ### Implemented
@@ -221,6 +232,7 @@ Configuration lives in `src/config.sh`. Copy `src/config.example.sh` and adjust 
 - [x] Bash autocomplete for projects and commands
 - [x] Recent projects history (`pd recent` / `pd r`)
 - [x] Modular `src/` architecture
+- [x] BATS test suite + ShellCheck lint + CI (GitHub Actions)
 
 ### Coming next
 

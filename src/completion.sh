@@ -26,18 +26,14 @@ _pd_completion() {
 
         done
 
-        COMPREPLY=(
-            $(compgen -W "$words" -- "$current")
-        )
+        mapfile -t COMPREPLY < <(compgen -W "$words" -- "$current")
 
         return
     fi
 
     case "$prev" in
         recent|r)
-            COMPREPLY=(
-                $(compgen -W "list ls" -- "$current")
-            )
+            mapfile -t COMPREPLY < <(compgen -W "list ls" -- "$current")
             ;;
     esac
 

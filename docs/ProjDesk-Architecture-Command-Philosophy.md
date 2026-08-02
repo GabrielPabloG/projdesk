@@ -25,7 +25,7 @@ Examples of Progressive Refinement:
 
 pd my-project (Implicit intent: Open)
 
-pd a my-project (Refinement: Open/Create, specifically for Android)
+pd a (Refinement: Android, specifically — opens Android Studio's New Project wizard)
 
 2. Managing Recent Projects
 
@@ -77,7 +77,7 @@ Discovery via Autocomplete: Every command must be reachable through tab completi
 This represents the mental model users should have of ProjDesk. This structure is mirrored in the pd help command.
 
 pd [project-name]       -> Open or create a project (VS Code by default)
-pd a [project-name]     -> Open or create an Android project (Android Studio)
+pd a                    -> Open Android Studio's New Project wizard
 
 # Environment Commands
 pd up                   -> Start Docker containers
