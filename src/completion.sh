@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 _pd_commands() {
-    echo "a down list logs ls r recent rebuild up"
+    echo "a down h help l lang list logs ls r recent rebuild up"
 }
 
 _pd_completion() {

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+show_help() {
+    t help_title
+    echo ""
+    echo "🔹 Projects"
+    printf "  %-28s %s\n" "pd <project>"              "Open or create a project (auto-detects IDE/Docker)"
+    printf "  %-28s %s\n" "pd projdesk"               "Open ProjDesk's own configuration"
+    printf "  %-28s %s\n" "pd a | -a | --android"     "Open Android Studio's New Project wizard"
+    echo ""
+    echo "🔹 Workspace"
+    printf "  %-28s %s\n" "pd list | ls"              "List all projects"
+    printf "  %-28s %s\n" "pd recent | r"             "Open most recently used project"
+    printf "  %-28s %s\n" "pd recent list | r ls"     "List last 10 used projects"
+    echo ""
+    echo "🔹 Environment"
+    printf "  %-28s %s\n" "pd up"                     "Start Docker + Compose services"
+    printf "  %-28s %s\n" "pd rebuild"                "Rebuild and restart Compose"
+    printf "  %-28s %s\n" "pd down"                   "Stop Compose services"
+    printf "  %-28s %s\n" "pd logs"                   "Tail Compose logs"
+    echo ""
+    echo "🔹 System"
+    printf "  %-28s %s\n" "pd help | h"               "Show this help"
+    printf "  %-28s %s\n" "pd lang <code> | l <code>" "Switch language (en, pt_BR, es)"
+    echo ""
+    t help_tip
+}

@@ -81,6 +81,13 @@ main() {
             shift
             recent "$@"
             ;;
+        help|h)
+            show_help
+            ;;
+        lang|l)
+            shift
+            cmd_lang "$@"
+            ;;
         *)
             open_project "$1"
             ;;

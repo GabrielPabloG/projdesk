@@ -12,6 +12,7 @@
   <img src="https://img.shields.io/badge/platform-WSL-blue">
   <img src="https://img.shields.io/badge/license-MIT-green">
   <img src="https://img.shields.io/badge/bash-5+-orange">
+  <img src="https://img.shields.io/badge/version-1.0.0-blue">
   <img src="https://github.com/GabrielPabloG/projdesk/actions/workflows/test.yml/badge.svg">
 </p>
 
@@ -50,6 +51,7 @@ projdesk r ls
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Testing](#testing)
 - [Roadmap](#roadmap)
 - [License](#license)
 
@@ -57,6 +59,7 @@ projdesk r ls
 
 **Workspace management**
 - Create projects automatically — `pd name` creates the folder if it doesn't exist
+- `pd projdesk` — opens ProjDesk's own configuration from anywhere
 - Jump into any workspace from anywhere
 - List all projects in your workspace
 - Jump back into recently used projects — `pd recent` (alias: `pd r`)
@@ -73,6 +76,8 @@ projdesk r ls
 - Honors `docker-compose.dev.yml` overrides when present
 
 **Developer experience**
+- Built-in help — `pd help` / `pd h` shows the full command map
+- Multilingual — `pd lang en|pt|es` switches output on the fly (pt_BR, English, Español)
 - Bash autocomplete for project names and commands
 - Modular, lightweight shell-only codebase (no dependencies)
 - No prompts when the answer can be detected
@@ -99,6 +104,14 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | `pd rebuild` | | Rebuild and restart Compose services |
 | `pd down` | | Stop Compose services |
 | `pd logs` | | Tail Compose service logs |
+
+### System Commands
+
+| Command | Alias | Description |
+| --- | --- | --- |
+| `pd help` | `pd h` | Show the command map |
+| `pd lang en\|pt\|es` | `pd l` | Switch output language |
+| `pd projdesk` | | Open ProjDesk's own configuration |
 
 ## How It Works
 
@@ -140,20 +153,32 @@ ProjDesk is strictly modular. Every file in `src/` has one job and stays small:
 | Module | Responsibility |
 | --- | --- |
 | `init.sh` | Entry point. Registers the `pd` function and loads all modules |
-| `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_MODE`, `DOCKER_EXE`, `AUTO_OPEN_CODE`) |
+| `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_MODE`, `DOCKER_EXE`, `AUTO_OPEN_CODE`, `PD_LANG`) |
+| `strings.sh` | i18n loader — sources all language dictionaries from `lang/` and provides `t()` |
+| `help.sh` | Command map display — renders `pd help` / `pd h` |
 | `project.sh` | Router and workspace manipulator — parses the semantic tree and dispatches commands |
 | `detect.sh` | Sensory layer — inspects the filesystem for Docker Compose and mobile projects |
 | `docker.sh` | Docker lifecycle — backend-aware auto-start (WSL engine or Desktop), up, rebuild, down, logs |
-| `completion.sh` | Bash autocomplete for project names |
+| `recent.sh` | Project history — tracks and lists recently opened projects |
+| `completion.sh` | Bash autocomplete for project names and commands |
+| `lang/` | Per-language string dictionaries (`pt_BR.sh`, `en.sh`, `es.sh`) |
 
 ```
 src/
 ├── init.sh          # entry point: registers pd() and sources modules
 ├── config.sh        # user configuration
+├── config.example.sh # configuration template (tracked in git)
+├── strings.sh       # i18n loader + translation function t()
+├── help.sh          # help command display
 ├── detect.sh        # project detection (compose, gradle, flutter)
 ├── docker.sh        # docker engine (wsl/desktop) + compose lifecycle
+├── recent.sh        # recently used projects history
 ├── project.sh       # command router + workspace actions
-└── completion.sh    # bash completion
+├── completion.sh    # bash autocomplete
+└── lang/
+    ├── pt_BR.sh     # Portuguese (Brazil) strings
+    ├── en.sh        # English strings
+    └── es.sh        # Spanish strings
 ```
 
 ## Requirements
@@ -233,13 +258,13 @@ Tests run in isolated temporary directories — no real Docker, no system `.bash
 - [x] Bash autocomplete for projects and commands
 - [x] Recent projects history (`pd recent` / `pd r`)
 - [x] Modular `src/` architecture
-- [x] BATS test suite + ShellCheck lint + CI (GitHub Actions)
+- [x] `pd help` / `pd h` — built-in command map
+- [x] i18n — pt_BR, en, es with `pd lang` and automatic locale detection
+- [x] BATS test suite (58 tests) + ShellCheck lint + CI (GitHub Actions)
 
 ### Coming next
 
 - [ ] `pd doctor` — diagnostics and auto-fix for dependencies
-- [ ] `pd help` — command map mirroring the semantic tree
-- [ ] Automatic language detection
 - [ ] IntelliJ IDEA, PyCharm, WebStorm, and Rider support
 - [ ] Project templates
 - [ ] Git repository initialization

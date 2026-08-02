@@ -12,7 +12,9 @@ AUTO_OPEN_CODE=true
 
 AUTO_START_CONTAINERS=false
 
-# pt_BR = Português (padrão) | en = English
+PROJDESK_VERSION="1.0.0"
+
+# pt_BR = Português (padrão) | en = English | es = Español
 # PD_LANG="en"
 
 RECENT_FILE="$HOME/.config/projdesk/recent"

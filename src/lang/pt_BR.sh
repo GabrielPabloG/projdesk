@@ -20,6 +20,10 @@ declare -A MSG=(
     [recent_empty]="🕐 Nenhum projeto recente ainda."
     [recent_title]="🕐 Projetos recentes:"
     [recent_empty_open]="🕐 Nenhum projeto recente ainda. Abra um com: pd <projeto>"
+    [help_title]="ProjDesk — Menos fricção. Mais código."
+    [help_tip]="💡 Defina PD_LANG=en, pt_BR ou es no config.sh."
+    [lang_current]="Idioma atual: %s"
+    [lang_switched]="Alterado para %s."
 )
 
 for key in "${!MSG[@]}"; do

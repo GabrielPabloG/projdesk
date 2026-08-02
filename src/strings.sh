@@ -30,3 +30,16 @@ t() {
     printf -v msg -- "$msg" "$@"
     printf '%s\n' "$msg"
 }
+
+cmd_lang() {
+    case "${1:-}" in
+        en)         export PD_LANG=en ;;
+        pt|pt_BR)   export PD_LANG=pt_BR ;;
+        es)         export PD_LANG=es ;;
+        *)
+            t lang_current "$(pd_lang)"
+            return
+            ;;
+    esac
+    t lang_switched "$(pd_lang)"
+}
