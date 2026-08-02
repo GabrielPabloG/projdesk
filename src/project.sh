@@ -24,6 +24,16 @@ open_project() {
         return 1
     fi
 
+    if [ "$PROJECT" = "projdesk" ]; then
+        cd "$HOME/.config/projdesk" || return 1
+        recent_add "projdesk"
+        if [ "$AUTO_OPEN_CODE" = true ]; then
+            t vscode_opening
+            code .
+        fi
+        return
+    fi
+
     mkdir -p "$PROJECTS_DIR/$PROJECT"
     cd "$PROJECTS_DIR/$PROJECT" || return 1
 

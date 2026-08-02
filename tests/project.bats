@@ -51,6 +51,16 @@ SCRIPT
     [ "$(head -n 1 "$RECENT_FILE")" = "foobar" ]
 }
 
+@test "open_project: projdesk opens its own config dir" {
+    mock_cmd code "CODE"
+    export HOME="$BATS_TEST_TMPDIR/home"
+    mkdir -p "$HOME/.config/projdesk"
+    run open_project "projdesk"
+    [ ! -d "$PROJECTS_DIR/projdesk" ]
+    [ "$(head -n 1 "$RECENT_FILE")" = "projdesk" ]
+    grep -q "CODE" "$MOCK_LOG"
+}
+
 @test "open_project: opens VS Code by default" {
     mock_cmd code "CODE"
     run open_project "foobar"
