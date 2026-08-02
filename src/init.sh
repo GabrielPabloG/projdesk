@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck source=config.sh
+# shellcheck source=config.example.sh
 # shellcheck source=detect.sh
 # shellcheck source=docker.sh
 # shellcheck source=recent.sh

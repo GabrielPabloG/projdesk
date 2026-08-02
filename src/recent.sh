@@ -17,7 +17,11 @@ recent_add() {
     local TMP
     TMP="$(mktemp)"
 
-    [ -f "$FILE" ] && grep -v "^$PROJECT$" "$FILE" > "$TMP" || : > "$TMP"
+    if [ -f "$FILE" ]; then
+        grep -v "^$PROJECT$" "$FILE" > "$TMP" || true
+    else
+        : > "$TMP"
+    fi
 
     {
         echo "$PROJECT"
