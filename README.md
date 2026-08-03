@@ -96,6 +96,8 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | `pd list` | `pd ls` | List all projects in the workspace |
 | `pd recent` | `pd r` | Open the most recently used project |
 | `pd recent list` | `pd r ls` | List the last 10 used projects |
+| `pd remove` | `pd rm` | Move project(s) to trash (max 3) |
+| `pd remove all` | `pd rm all` | Remove all projects at once |
 
 ### Environment Commands
 
@@ -113,6 +115,16 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | `pd help` | `pd h` | Show the command map |
 | `pd lang en\|pt\|es` | `pd l` | Switch output language |
 | `pd projdesk` | | Open ProjDesk's own configuration |
+
+### Trash Commands
+
+| Command | Alias | Description |
+| --- | --- | --- |
+| `pd trash` | `pd t` | List trash contents + available commands |
+| `pd trash list` | `pd t ls` | List items in trash |
+| `pd trash empty` | `pd t empty` | Empty trash (with confirmation) |
+| `pd trash remove <name\|all>` | `pd t rm <name\|all>` | Permanently delete item(s) from trash |
+| `pd trash restore <name\|all>` | `pd t restore <name\|all>` | Restore item(s) from trash |
 
 ### Machine Commands
 
@@ -183,6 +195,8 @@ ProjDesk is strictly modular. Every file in `src/` has one job and stays small:
 | `detect.sh` | Sensory layer — inspects the filesystem for Docker Compose and mobile projects |
 | `docker.sh` | Docker lifecycle — backend-aware auto-start (WSL engine or Desktop), up, rebuild, down, logs |
 | `recent.sh` | Project history — tracks and lists recently opened projects |
+| `remove.sh` | Project removal — moves to trash with expiry, supports force delete |
+| `trash.sh` | Trash management — list, empty, remove, restore items from trash |
 | `completion.sh` | Bash autocomplete for project names and commands |
 | `lang/` | Per-language string dictionaries (`pt_BR.sh`, `en.sh`, `es.sh`) |
 
@@ -196,6 +210,8 @@ src/
 ├── detect.sh        # project detection (compose, gradle, flutter)
 ├── docker.sh        # docker engine (wsl/desktop) + compose lifecycle
 ├── recent.sh        # recently used projects history
+├── remove.sh        # project removal + trash logic
+├── trash.sh         # trash management (list, empty, rm, restore)
 ├── project.sh       # command router + workspace actions
 ├── completion.sh    # bash autocomplete
 └── lang/
@@ -283,12 +299,14 @@ Tests run in isolated temporary directories — no real Docker, no system `.bash
 - [x] Modular `src/` architecture
 - [x] `pd help` / `pd h` — built-in command map
 - [x] i18n — pt_BR, en, es with `pd lang` and automatic locale detection
-- [x] Machine commands — `pd resolve` for scripts and integrations (AiosDeck, CI, plugins)
-- [x] BATS test suite (70 tests) + ShellCheck lint + CI (GitHub Actions)
+- [x] `pd resolve` — machine-readable project path for scripts and integrations (AiosDeck, CI, plugins)
+- [x] `pd remove` — safely remove projects with trash (3-day expiry, max 3 items)
+- [x] `pd trash` — trash management: list, empty, restore, permanent delete
+- [x] BATS test suite + ShellCheck lint + CI (GitHub Actions)
 
 ### Coming next
 
-- [ ] `pd remove` — safely remove projects (`rm` alias)
+- [ ] `pd doctor` — diagnostics and auto-fix for dependencies
 - [ ] Project templates
 - [ ] Git repository initialization
 - [ ] `pd doctor` — diagnostics and auto-fix for dependencies

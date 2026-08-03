@@ -45,6 +45,22 @@ recent_list() {
     head -n 10 "$FILE" | nl -w 2 -s '. '
 }
 
+recent_remove() {
+    local PROJECT="$1"
+
+    [ -z "$PROJECT" ] && return 1
+
+    local FILE
+    FILE="$(recent_file)"
+
+    [ -f "$FILE" ] || return 0
+
+    local TMP
+    TMP="$(mktemp)"
+    grep -v "^$PROJECT$" "$FILE" > "$TMP" || true
+    mv "$TMP" "$FILE"
+}
+
 recent_open() {
     local FILE
     FILE="$(recent_file)"

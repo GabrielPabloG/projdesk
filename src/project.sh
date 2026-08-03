@@ -132,6 +132,14 @@ main() {
             shift
             recent "$@"
             ;;
+        remove|rm)
+            shift
+            remove_project "$@"
+            ;;
+        trash|t)
+            shift
+            trash "$@"
+            ;;
         help|h)
             show_help
             ;;
