@@ -289,7 +289,6 @@ Tests run in isolated temporary directories — no real Docker, no system `.bash
 ### Coming next
 
 - [ ] `pd remove` — safely remove projects (`rm` alias)
-- [ ] IntelliJ IDEA, PyCharm, WebStorm, and Rider support
 - [ ] Project templates
 - [ ] Git repository initialization
 - [ ] `pd doctor` — diagnostics and auto-fix for dependencies
