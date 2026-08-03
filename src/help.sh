@@ -23,5 +23,8 @@ show_help() {
     printf "  %-28s %s\n" "pd help | h"               "Show this help"
     printf "  %-28s %s\n" "pd lang <code> | l <code>" "Switch language (en, pt_BR, es)"
     echo ""
+    echo "🔹 Machine Commands (for scripts & integrations)"
+    printf "  %-28s %s\n" "pd resolve <project>"       "Output absolute project path"
+    echo ""
     t help_tip
 }

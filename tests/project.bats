@@ -151,3 +151,77 @@ SCRIPT
     run main "newapp"
     [ -d "$PROJECTS_DIR/newapp" ]
 }
+
+@test "resolve_project: returns path for exact match" {
+    mkdir -p "$PROJECTS_DIR/myproj"
+    run resolve_project "myproj"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$PROJECTS_DIR/myproj" ]
+}
+
+@test "resolve_project: returns path for single prefix match" {
+    mkdir -p "$PROJECTS_DIR/api-v2"
+    run resolve_project "api"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$PROJECTS_DIR/api-v2" ]
+}
+
+@test "resolve_project: exact match takes priority over prefix" {
+    mkdir -p "$PROJECTS_DIR/api" "$PROJECTS_DIR/api-v2"
+    run resolve_project "api"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$PROJECTS_DIR/api" ]
+}
+
+@test "resolve_project: not found returns exit 1" {
+    run resolve_project "nonexistent"
+    [ "$status" -eq 1 ]
+    [[ "$output" == *"not found"* ]]
+}
+
+@test "resolve_project: multiple prefix matches returns exit 2" {
+    mkdir -p "$PROJECTS_DIR/api-v1" "$PROJECTS_DIR/api-v2"
+    run resolve_project "api"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"Multiple projects"* ]]
+}
+
+@test "resolve_project: empty argument returns exit 1" {
+    run resolve_project ""
+    [ "$status" -eq 1 ]
+}
+
+@test "open_project: ambiguous match returns exit 2" {
+    mkdir -p "$PROJECTS_DIR/api-v1" "$PROJECTS_DIR/api-v2"
+    run open_project "api"
+    [ "$status" -eq 2 ]
+    [[ "$output" == *"específico"* ]]
+}
+
+@test "open_project: creates new project when none match" {
+    mock_cmd code "CODE"
+    run open_project "brandnew"
+    [ "$status" -eq 0 ]
+    [ -d "$PROJECTS_DIR/brandnew" ]
+    [ "$(head -n 1 "$RECENT_FILE")" = "brandnew" ]
+}
+
+@test "open_project: opens existing project via prefix match" {
+    mock_cmd code "CODE"
+    mkdir -p "$PROJECTS_DIR/myproject"
+    run open_project "mypro"
+    [ "$status" -eq 0 ]
+    [ "$(head -n 1 "$RECENT_FILE")" = "myproject" ]
+}
+
+@test "main: routes resolve to resolve_project" {
+    mkdir -p "$PROJECTS_DIR/myproj"
+    run main resolve "myproj"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$PROJECTS_DIR/myproj" ]
+}
+
+@test "main: resolve not found returns exit 1" {
+    run main resolve "nonexistent"
+    [ "$status" -eq 1 ]
+}

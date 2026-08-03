@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 _pd_commands() {
-    echo "a down h help l lang list logs ls r recent rebuild up"
+    echo "a down h help l lang list logs ls r recent rebuild resolve up"
 }
 
 _pd_completion() {
@@ -34,6 +34,14 @@ _pd_completion() {
     case "$prev" in
         recent|r)
             mapfile -t COMPREPLY < <(compgen -W "list ls" -- "$current")
+            ;;
+        resolve)
+            local proj_words
+            for dir in "$PROJECTS_DIR"/*; do
+                [[ -d "$dir" ]] || continue
+                proj_words+=" $(basename "$dir")"
+            done
+            mapfile -t COMPREPLY < <(compgen -W "$proj_words" -- "$current")
             ;;
     esac
 

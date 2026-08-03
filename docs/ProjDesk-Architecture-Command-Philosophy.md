@@ -94,6 +94,10 @@ pd list (ls)            -> List all projects in the workspace
 pd doctor (dr)          -> Check system dependencies (Docker, Studio, etc.)
 pd doctor fix (dr f)    -> Attempt to auto-fix missing dependencies
 
+# Machine Commands (for scripts & integrations)
+pd resolve (res)        -> Output absolute project path (machine-readable, no formatting)
+                             Exit codes: 0=found, 1=not found, 2=multiple matches
+
 # System Commands
 pd help (h)             -> Show this help menu
 

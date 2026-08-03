@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Nova função para listar os projetos
 list_projects() {
     if [ ! -d "$PROJECTS_DIR" ]; then
         t projects_dir_not_found "$PROJECTS_DIR"
@@ -9,6 +8,43 @@ list_projects() {
 
     t projects_title
     ls -1 "$PROJECTS_DIR"
+}
+
+resolve_project() {
+    local PROJECT="$1"
+
+    if [ -z "$PROJECT" ]; then
+        printf 'Usage: pd resolve <project>\n' >&2
+        return 1
+    fi
+
+    if [ -d "$PROJECTS_DIR/$PROJECT" ]; then
+        printf '%s\n' "$PROJECTS_DIR/$PROJECT"
+        return 0
+    fi
+
+    local matches=()
+    local dir name
+    for dir in "$PROJECTS_DIR"/*; do
+        [ -d "$dir" ] || continue
+        name="$(basename "$dir")"
+        [[ "$name" == "$PROJECT"* ]] && matches+=("$name")
+    done
+
+    case "${#matches[@]}" in
+        0)
+            printf 'Project "%s" not found.\n' "$PROJECT" >&2
+            return 1
+            ;;
+        1)
+            printf '%s\n' "$PROJECTS_DIR/${matches[0]}"
+            return 0
+            ;;
+        *)
+            printf 'Multiple projects match "%s".\n' "$PROJECT" >&2
+            return 2
+            ;;
+    esac
 }
 
 open_android_studio() {
@@ -34,10 +70,25 @@ open_project() {
         return
     fi
 
-    mkdir -p "$PROJECTS_DIR/$PROJECT"
-    cd "$PROJECTS_DIR/$PROJECT" || return 1
+    local RESOLVED rc
+    RESOLVED="$(resolve_project "$PROJECT" 2>/dev/null)"
+    rc=$?
 
-    recent_add "$PROJECT"
+    case "$rc" in
+        0)
+            cd "$RESOLVED" || return 1
+            recent_add "$(basename "$RESOLVED")"
+            ;;
+        1)
+            mkdir -p "$PROJECTS_DIR/$PROJECT"
+            cd "$PROJECTS_DIR/$PROJECT" || return 1
+            recent_add "$PROJECT"
+            ;;
+        2)
+            t resolve_ambiguous "$PROJECT"
+            return 2
+            ;;
+    esac
 
     if has_docker_compose; then
         start_docker
@@ -83,6 +134,10 @@ main() {
             ;;
         help|h)
             show_help
+            ;;
+        resolve)
+            shift
+            resolve_project "$1"
             ;;
         lang|l)
             shift

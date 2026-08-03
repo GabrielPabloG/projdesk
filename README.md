@@ -79,6 +79,7 @@ projdesk r ls
 - Built-in help — `pd help` / `pd h` shows the full command map
 - Multilingual — `pd lang en|pt|es` switches output on the fly (pt_BR, English, Español)
 - Bash autocomplete for project names and commands
+- Machine commands — `pd resolve <project>` outputs an absolute path for scripts and integrations (AiosDeck, CI, plugins) with exit codes `0`/`1`/`2`
 - Modular, lightweight shell-only codebase (no dependencies)
 - No prompts when the answer can be detected
 
@@ -113,6 +114,14 @@ Commands follow a progressive refinement structure: **Noun → Verb → Modifier
 | `pd lang en\|pt\|es` | `pd l` | Switch output language |
 | `pd projdesk` | | Open ProjDesk's own configuration |
 
+### Machine Commands
+
+| Command | Description |
+| --- | --- |
+| `pd resolve <project>` | Output the absolute project path. Designed for scripts and integrations — no human formatting. Exit codes: `0` found · `1` not found · `2` multiple matches |
+
+The contract is rigid and predictable: **stdout** carries only the absolute path (nothing else), **stderr** carries only error messages, and the **exit code** reports the outcome. `pd resolve` is the same single source of truth that `pd <project>` uses under the hood, so scripts never depend on ProjDesk's internal files or formatting.
+
 ## How It Works
 
 ### The Semantic Command Tree
@@ -139,6 +148,20 @@ pd list        →  pd ls
 
 Learning the tool pays off in fewer keystrokes, not fewer features.
 
+### One Resolution, Two Interfaces
+
+Every project lookup flows through a single implementation, `resolve_project()`. Two commands expose it to different audiences:
+
+```
+pd my-project      human UX   → resolves → opens IDE, starts Docker, updates recent
+pd resolve name    machine API → resolves → prints path, returns exit code
+```
+
+- **`pd <project>`** is the human interface. It resolves the project and then acts: opens the IDE, starts containers, updates the recent list. It may even create the project.
+- **`pd resolve <project>`** is the machine interface. It resolves the project and nothing else — the absolute path on stdout, an exit code for scripts.
+
+Because both share one implementation, they can never diverge. Scripts get a stable API; users get a friendly front-end over the same engine.
+
 ## Design Principles
 
 - **No prompts when it can be automated.** If ProjDesk can detect a project type, it opens the right IDE instead of asking.
@@ -156,7 +179,7 @@ ProjDesk is strictly modular. Every file in `src/` has one job and stays small:
 | `config.sh` | Global configuration (`PROJECTS_DIR`, `DOCKER_MODE`, `DOCKER_EXE`, `AUTO_OPEN_CODE`, `PD_LANG`) |
 | `strings.sh` | i18n loader — sources all language dictionaries from `lang/` and provides `t()` |
 | `help.sh` | Command map display — renders `pd help` / `pd h` |
-| `project.sh` | Router and workspace manipulator — parses the semantic tree and dispatches commands |
+| `project.sh` | Router, project resolution, workspace manipulator — parses the semantic tree, dispatches commands, and `resolve_project()` powers both `pd <project>` and `pd resolve` |
 | `detect.sh` | Sensory layer — inspects the filesystem for Docker Compose and mobile projects |
 | `docker.sh` | Docker lifecycle — backend-aware auto-start (WSL engine or Desktop), up, rebuild, down, logs |
 | `recent.sh` | Project history — tracks and lists recently opened projects |
@@ -260,16 +283,18 @@ Tests run in isolated temporary directories — no real Docker, no system `.bash
 - [x] Modular `src/` architecture
 - [x] `pd help` / `pd h` — built-in command map
 - [x] i18n — pt_BR, en, es with `pd lang` and automatic locale detection
-- [x] BATS test suite (58 tests) + ShellCheck lint + CI (GitHub Actions)
+- [x] Machine commands — `pd resolve` for scripts and integrations (AiosDeck, CI, plugins)
+- [x] BATS test suite (70 tests) + ShellCheck lint + CI (GitHub Actions)
 
 ### Coming next
 
-- [ ] `pd doctor` — diagnostics and auto-fix for dependencies
+- [ ] `pd remove` — safely remove projects (`rm` alias)
 - [ ] IntelliJ IDEA, PyCharm, WebStorm, and Rider support
 - [ ] Project templates
 - [ ] Git repository initialization
-- [ ] Plugin system
+- [ ] `pd doctor` — diagnostics and auto-fix for dependencies
 - [ ] Interactive mode
+- [ ] Plugin system
 - [ ] Workspace profiles
 
 ## License

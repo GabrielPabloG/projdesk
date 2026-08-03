@@ -24,6 +24,7 @@ declare -A MSG=(
     [help_tip]="💡 Set PD_LANG=en, pt_BR, or es in config.sh."
     [lang_current]="Language: %s"
     [lang_switched]="Switched to %s."
+    [resolve_ambiguous]="Multiple projects match \"%s\". Be more specific."
 )
 
 for key in "${!MSG[@]}"; do
